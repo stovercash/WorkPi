@@ -1,0 +1,4 @@
+# All secrets files that contain passwords and URLs will be ignored from check in
+
+secrets*
+
