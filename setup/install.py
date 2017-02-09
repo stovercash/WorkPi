@@ -37,6 +37,7 @@ if not cur.fetchone():
 	cur.execute("CREATE DATABASE " + mysecrets["sql"]["dbname"] + ";")
 
 cur.execute("USE " + mysecrets["sql"]["dbname"] + ";")
+
 cur.execute("SHOW TABLES LIKE 'VSOCheckIn';")
 if not cur.fetchone():
 	cur.execute("CREATE TABLE VSOCheckIn ( EntryNo int NOT NULL, PRIMARY KEY (EntryNo) );")
@@ -61,3 +62,10 @@ cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME
 if not cur.fetchone():
 	cur.execute("ALTER TABLE VSOCheckIn ADD NoOfObjects int")
 
+cur.execute("SHOW TABLES LIKE 'VSOSetup';")
+if not cur.fetchone():
+	cur.execute("CREATE TABLE VSOSetup ( PrimaryKey int NOT NULL, PRIMARY KEY (PrimaryKey) );")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOSetup' AND COLUMN_NAME = 'CheckInDownloadedDate';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOSetup ADD CheckInDownloadedDate datetime")
