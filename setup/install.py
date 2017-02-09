@@ -32,6 +32,32 @@ with open("secrets.json", "w") as outfile:
 
 con = sql.connect("localhost",mysecrets["sql"]["user"],mysecrets["sql"]["pass"],"")
 cur = con.cursor()
-cur.execute("SHOW DATABASES LIKE '" + mysecrets["sql"]["dbname"] + "'")
+cur.execute("SHOW DATABASES LIKE '" + mysecrets["sql"]["dbname"] + "';")
 if not cur.fetchone():
 	cur.execute("CREATE DATABASE " + mysecrets["sql"]["dbname"] + ";")
+
+cur.execute("USE " + mysecrets["sql"]["dbname"] + ";")
+cur.execute("SHOW TABLES LIKE 'VSOCheckIn';")
+if not cur.fetchone():
+	cur.execute("CREATE TABLE VSOCheckIn ( EntryNo int NOT NULL, PRIMARY KEY (EntryNo) );")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOCheckIn' AND COLUMN_NAME = 'DateCheckedIn';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOCheckIn ADD DateCheckedIn datetime")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOCheckIn' AND COLUMN_NAME = 'DisplayName';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOCheckIn ADD DisplayName varchar(40)")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOCheckIn' AND COLUMN_NAME = 'UserID';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOCheckIn ADD UserID varchar(10)")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOCheckIn' AND COLUMN_NAME = 'Comment';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOCheckIn ADD Comment varchar(250)")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOCheckIn' AND COLUMN_NAME = 'NoOfObjects';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOCheckIn ADD NoOfObjects int")
+
