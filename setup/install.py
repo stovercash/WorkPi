@@ -1,6 +1,9 @@
 import os
 import json
 import pymysql as sql
+import datetime
+
+today = datetime.date.today()
 
 if not os.path.isfile("secrets.json"):
 	os.mknod("secrets.json")
@@ -69,3 +72,8 @@ if not cur.fetchone():
 cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOSetup' AND COLUMN_NAME = 'CheckInDownloadedDate';")
 if not cur.fetchone():
 	cur.execute("ALTER TABLE VSOSetup ADD CheckInDownloadedDate datetime")
+
+cur.execute("SELECT PrimaryKey FROM VSOSetup")
+if not cur.fetchone():
+	cur.execute("INSERT INTO VSOSetup (PrimaryKey, CheckInDownloadedDate) VALUES (0,'" + today.strftime('%Y-%m-%d') + "');")
+
