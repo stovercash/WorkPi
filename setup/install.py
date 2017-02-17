@@ -77,3 +77,14 @@ cur.execute("SELECT PrimaryKey FROM VSOSetup")
 if not cur.fetchone():
 	cur.execute("INSERT INTO VSOSetup (PrimaryKey, CheckInDownloadedDate) VALUES (0,'" + today.strftime('%Y-%m-%d') + "');")
 
+cur.execute("SHOW TABLES LIKE 'VSOUser';")
+if not cur.fetchone():
+	cur.execute("CREATE TABLE VSOUser ( UserID varchar(10) NOT NULL, PRIMARY KEY (UserID) );")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOUser' AND COLUMN_NAME = 'VSOName';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOUser ADD VSOName varchar(30)")
+
+con.commit()
+cur.close()
+con.close()

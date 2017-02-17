@@ -19,13 +19,31 @@ cur.execute("SELECT DATE_FORMAT(CheckInDownloadedDate,'%m-%d-%Y') AS CheckInDown
 row = cur.fetchone()
 downloadDateText = row[0]
 
-restfunc = 'DefaultCollection/_apis/tfvc/changesets?'
-restfunc = restfunc + 'fromDate=' + downloadDateText
-restfunc = restfunc + '&toDate=' + todayText
-restfunc = restfunc + '&api-version=2.0'
+changesetsfunc = 'DefaultCollection/_apis/tfvc/changesets?'
+changesetsfunc = changesetsfunc + 'fromDate=' + downloadDateText + '-12:00AM'
+changesetsfunc = changesetsfunc + '&toDate=' + todayText
+changesetsfunc = changesetsfunc + '&api-version=2.0'
 
-print(restfunc)
-results = requests.get(baseurl+restfunc, auth=(user,pat))
-print(results.json())
+singlechangefunc = 'DefaultCollection/_apis/tfvc/changesets/'
+singlechangesuffix = '/changes?api-version=2.0'
 
-#cur.execute("UPDATE VSOSetup SET CheckInDateDownloaded = '" + todayText "' WHERE PrimaryKey = 0")
+#print(baseurl+changesetsfunc)
+results = requests.get(baseurl+changesetsfunc, auth=(user,pat))
+#print(results.json())
+jres = results.json()
+#print(jres)
+
+for changeset in jres["value"]:
+	cur.execute("SELECT EntryNo FROM VSOCheckIn WHERE EntryNo = %s",(changeset["changesetId"]))
+	if not cur.fetchone():
+#		print(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix)
+		results = requests.get(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix, auth=(user,pat))
+		jsingle = results.json()
+#		print(str(jsingle["count"]))
+		cur.execute("INSERT INTO VSOCheckIn (EntryNo,DateCheckedIn,DisplayName,Comment,NoOfObjects) VALUES (%s,%s,%s,%s,%s)",(changeset["changesetId"],changeset["createdDate"],changeset["author"]["displayName"],changeset["comment"],jsingle["count"]))
+
+cur.execute("UPDATE VSOSetup SET CheckInDownloadedDate = '" + today.strftime('%Y-%m-%d') +  "' WHERE PrimaryKey = 0")
+
+con.commit()
+cur.close()
+con.close()
