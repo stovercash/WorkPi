@@ -6,7 +6,7 @@ import datetime
 today = datetime.date.today()
 todayText = today.strftime('%m-%d-%Y')
 
-mysecrets = json.loads(open("../setup/secrets.json").read())
+mysecrets = json.loads(open("/home/pi/dev/WorkPi/setup/secrets.json").read())
 user = mysecrets["vso"]["user"]
 pat = mysecrets["vso"]["pat"]
 baseurl = mysecrets["vso"]["baseurl"]
@@ -34,13 +34,22 @@ jres = results.json()
 #print(jres)
 
 for changeset in jres["value"]:
-	cur.execute("SELECT EntryNo FROM VSOCheckIn WHERE EntryNo = %s",(changeset["changesetId"]))
-	if not cur.fetchone():
-#		print(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix)
-		results = requests.get(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix, auth=(user,pat))
-		jsingle = results.json()
-#		print(str(jsingle["count"]))
-		cur.execute("INSERT INTO VSOCheckIn (EntryNo,DateCheckedIn,DisplayName,Comment,NoOfObjects) VALUES (%s,%s,%s,%s,%s)",(changeset["changesetId"],changeset["createdDate"],changeset["author"]["displayName"],changeset["comment"],jsingle["count"]))
+	if changeset["comment"] not in mysecrets["vso"]["excludecomments"]:
+		cur.execute("SELECT EntryNo FROM VSOCheckIn WHERE EntryNo = %s",(changeset["changesetId"]))
+		if not cur.fetchone():
+#			print(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix)
+			cur.execute("SELECT UserID FROM VSOUser WHERE VSOName = %s",(changeset["author"]["displayName"]))
+			UserRow = cur.fetchone()
+			if UserRow is None:
+				VSOName = changeset["author"]["displayName"]
+				UserID = VSOName[0] + VSOName.split()[1][0]
+				cur.execute("INSERT INTO VSOUser (UserID,VSOName) VALUES (%s,%s)",(UserID,VSOName))
+			else:
+				UserID = UserRow[0]
+			results = requests.get(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix, auth=(user,pat))
+			jsingle = results.json()
+#			print(str(jsingle["count"]))
+			cur.execute("INSERT INTO VSOCheckIn (EntryNo,UserID,DateCheckedIn,DisplayName,Comment,NoOfObjects) VALUES (%s,%s,%s,%s,%s,%s)",(changeset["changesetId"],UserID,changeset["createdDate"],changeset["author"]["displayName"],changeset["comment"],jsingle["count"]))
 
 cur.execute("UPDATE VSOSetup SET CheckInDownloadedDate = '" + today.strftime('%Y-%m-%d') +  "' WHERE PrimaryKey = 0")
 
