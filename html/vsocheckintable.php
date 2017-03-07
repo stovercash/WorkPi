@@ -9,6 +9,7 @@ $maxchanges = 50;
 
 $y = 1;
 $total_days = $ytotal * $xtotal;
+$offset_days = $total_days + 1;
 
 $mysqli = new mysqli('localhost',$mysecrets["sql"]["user"],$mysecrets["sql"]["pass"],$mysecrets["sql"]["dbname"]);
 $sql_stmt = $mysqli->prepare("SELECT IFNULL(SUM(NoOfObjects),0) AS Changes FROM VSOCheckIn WHERE DateCheckedIn BETWEEN ? AND ?");
@@ -18,7 +19,7 @@ while($y <= $ytotal)
 	$x = 1;
 	while($x <= $xtotal)
 	{
-		$subtract_days = $total_days - ((($x - 1) * $ytotal) + $y);
+		$subtract_days = $offset_days - ((($x - 1) * $ytotal) + $y);
 		$this_date = new DateTime();
 		$this_date = $this_date->modify("-$subtract_days days");
 		$this_month = intval($this_date->format('m'));
