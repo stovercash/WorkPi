@@ -10,7 +10,7 @@ $sql_stmt = $mysqli->prepare("SELECT IFNULL(SUM(NoOfObjects),0) AS Changes FROM 
 $end_date = new DateTime();
 $start_date = new DateTime();
 $start_date = $start_date->modify("-$offset_days days");
-$end_date = $end_date->modify("1 days");
+$end_date = $end_date->modify("-1 days");
 
 $this_start_time = $start_date->format('Y-m-d') . " 00:00:00.00";
 $this_end_time = $end_date->format('Y-m-d') . " 23:59:59.999";
