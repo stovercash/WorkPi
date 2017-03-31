@@ -53,9 +53,17 @@ while ($sql_user_stmt->fetch())
 ?>
 	]);
 
-	var options = {'title':'Check Ins by Developer',
-		'width':300,
-		'height':300};
+	var options = {'legend':'none',
+		'pieSliceText':'label',
+		'backgroundColor':'transparent',
+		'chartArea.top':0,
+		'chartArea.left':0,
+		'width':220,
+		'height':220,
+		'colors':['#C00000','#C03333','#C06666','#C09999','#C0C0C0','#888888','#444444','#000000'],
+		'fontSize':14,
+		'fontName':'Consolas'
+	};
 
 	var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
 	chart.draw(data, options);
