@@ -29,6 +29,18 @@ if "user" not in mysecrets["sql"]:
 if "pass" not in mysecrets["sql"]:
 	mysecrets["sql"]["pass"] = ""
 
+if "job_sql" not in mysecrets:
+	mysecrets["job_sql"] = {}
+if "server" not in mysecrets["job_sql"]:
+	mysecrets["job_sql"]["server"] = ""
+if "dbname" not in mysecrets["job_sql"]:
+	mysecrets["job_sql"]["dbname"] = ""
+if "user" not in mysecrets["job_sql"]:
+	mysecrets["job_sql"]["user"] = ""
+if "pass" not in mysecrets["job_sql"]:
+	mysecrets["job_sql"]["pass"] = ""
+if "jobtable" not in mysecrets["job_sql"]:
+	mysecrets["job_sql"]["jobtable"] = ""
 
 with open("secrets.json", "w") as outfile:
 	json.dump(mysecrets,outfile)
@@ -84,6 +96,14 @@ if not cur.fetchone():
 cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOUser' AND COLUMN_NAME = 'VSOName';")
 if not cur.fetchone():
 	cur.execute("ALTER TABLE VSOUser ADD VSOName varchar(30)")
+
+cur.execute("SHOW TABLES LIKE 'JobUserStats';")
+if not cur.fetchone():
+	cur.execute("CREATE TABLE JobUserStats ( UserID varchar(10) NOT NULL, DateChecked datetime );")
+
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'JobUserStats' AND COLUMN_NAME = 'OverdueJobs';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE JobUserStats ADD OverdueJobs int")
 
 con.commit()
 cur.close()

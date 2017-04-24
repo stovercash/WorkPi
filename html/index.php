@@ -51,5 +51,9 @@ include 'vsocheckinaverage.php';
 <div style="width: 160px; height: 160px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; float: left">
 <div style="position: relative; top: -30px; left: -30px" id="chart_div"></div>
 </div>
+<div style="clear: left"></div>
+<?php
+include 'jobsoverduebyuser.php';
+?>
 </body>
 </html>
