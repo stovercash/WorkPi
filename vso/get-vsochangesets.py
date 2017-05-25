@@ -19,7 +19,7 @@ cur.execute("SELECT DATE_FORMAT(CheckInDownloadedDate,'%m-%d-%Y') AS CheckInDown
 row = cur.fetchone()
 downloadDateText = row[0]
 
-changesetsfunc = 'DefaultCollection/_apis/tfvc/changesets?'
+changesetsfunc = 'DefaultCollection/_apis/tfvc/changesets?maxCommentLength=250&'
 changesetsfunc = changesetsfunc + 'fromDate=' + downloadDateText + '-12:00AM'
 changesetsfunc = changesetsfunc + '&toDate=' + todayText
 changesetsfunc = changesetsfunc + '&api-version=2.0'
