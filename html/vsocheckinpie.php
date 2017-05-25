@@ -1,12 +1,3 @@
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-
-google.charts.load('current', {'packages':['corechart']});
-
-google.charts.setOnLoadCallback(drawChart);
-
-function drawChart()
-{
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Dev');
     data.addColumn('number', 'Check Ins');
@@ -67,5 +58,3 @@ while ($sql_user_stmt->fetch())
 
 	var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
 	chart.draw(data, options);
-}
-</script>

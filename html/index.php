@@ -1,8 +1,20 @@
 <html>
 <head>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+
+google.charts.load('current', {'packages':['corechart','treemap']});
+
+google.charts.setOnLoadCallback(drawChart);
+
+function drawChart()
+{
 <?php
 include 'vsocheckinpie.php';
+include 'vsocheckinwordcloud.php';
 ?>
+}
+</script>
 </head>
 <body style="background-color: #000000; margin: 0; padding: 0; font-family: Consolas">
 <div style="width: 100%; height: 140px; margin: 0; padding: 0">
@@ -55,5 +67,8 @@ include 'vsocheckinaverage.php';
 <?php
 include 'jobsoverduebyuser.php';
 ?>
+<div style="width: 420px; height: 215px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; padding: 20px; float: left">
+<div id="chart_div_cloud" style="width: 100%; height: 100%;"></div>
+</div>
 </body>
 </html>
