@@ -5,7 +5,7 @@
 $mysecrets = json_decode(file_get_contents("/home/pi/dev/WorkPi/setup/secrets.json"), true);
 $first = true;
 $mysqli = new mysqli('localhost',$mysecrets["sql"]["user"],$mysecrets["sql"]["pass"],$mysecrets["sql"]["dbname"]);
-$sql_wordcloud_stmt = $mysqli->prepare("SELECT Word, Count FROM VSOWordCloud ORDER BY Count DESC LIMIT 20");
+$sql_wordcloud_stmt = $mysqli->prepare("SELECT Word, Count FROM VSOWordCloud ORDER BY Count DESC LIMIT 15");
 
 $sql_wordcloud_stmt->execute();
 $sql_wordcloud_stmt->bind_result($word,$count);
@@ -25,5 +25,6 @@ while ($sql_wordcloud_stmt->fetch())
 		maxColor: '#C00000',
 		headerHeight: 20,
 		fontColor: 'black',
+		fontFamily: 'Consolas',
 		showScale: false
 	});
