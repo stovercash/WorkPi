@@ -20,14 +20,12 @@ jobcur = jobconn.cursor()
 
 userrow = localcur.fetchone()
 while userrow:
-	jobcur.execute("SELECT COUNT(*) AS [No of Overdue Logs] FROM " + mysecrets["job_sql"]["jobtable"] + " WHERE ([Person Responsible] = %s) AND (Status <> 3) AND ([Due Date] < %s)",(userrow[0],todayText))
+	jobcur.execute("SELECT SUM([Initial Budget Hours]) AS [Open Job Hours] FROM " + mysecrets["job_sql"]["jobtable"] + " WHERE ([Person Responsible] = %s) AND ([Invoice Status] < 3) AND ([Billing status] = 2 ) AND (Priority > 0) AND (Priority < 9)",(userrow[0]))
 	jobrow = jobcur.fetchone()
-	while jobrow:
-		if inscur.execute("SELECT UserID, DateChecked FROM JobUserStats WHERE (UserID = %s) AND (DateChecked = %s)", (userrow[0],todayText)):
-			inscur.execute("UPDATE JobUserStats SET OverdueJobs = %s WHERE (UserID = %s) AND (DateChecked = %s)", (jobrow[0],userrow[0],todayText))
-		else:
-			inscur.execute("INSERT INTO JobUserStats (UserID, DateChecked, OverdueJobs) VALUES (%s, %s, %s)", (userrow[0],todayText,jobrow[0]))
-		jobrow = jobcur.fetchone()
+	if inscur.execute("SELECT UserID, DateChecked FROM JobUserStats WHERE (UserID = %s) AND (DateChecked = %s)", (userrow[0],todayText)):
+		inscur.execute("UPDATE JobUserStats SET OpenJobHours = %s WHERE  (UserID = %s) AND (DateChecked = %s)", (jobrow[0],userrow[0],todayText))
+	else:
+		inscur.execute("INSERT INTO JobUserStats (UserID, DateChecked, OpenJobHours) VALUES (%s, %s, %s)", (userrow[0],todayText,jobrow[0]))
 	userrow = localcur.fetchone()
 
 localconn.commit()

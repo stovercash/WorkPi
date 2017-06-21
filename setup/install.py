@@ -109,6 +109,10 @@ cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME
 if not cur.fetchone():
 	cur.execute("ALTER TABLE JobUserStats ADD OverdueJobs int")
 
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'JobUserStats' AND COLUMN_NAME = 'OpenJobHours';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE JobUserStats ADD OpenJobHours int")
+
 cur.execute("SHOW TABLES LIKE 'VSOWordCloud';")
 if not cur.fetchone():
 	cur.execute("CREATE TABLE VSOWordCloud ( Word varchar(100) NOT NULL, Count int );")
