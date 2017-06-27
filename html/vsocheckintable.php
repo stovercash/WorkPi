@@ -3,8 +3,8 @@ $mysecrets = json_decode(file_get_contents("/home/pi/dev/WorkPi/setup/secrets.js
 
 $bordersize = 2;
 $boxsize = 20;
-$ytotal = 5;
-$xtotal = 12;
+$ytotal = 8;
+$xtotal = 15;
 $maxchanges = 50;
 
 $y = 1;

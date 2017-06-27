@@ -49,8 +49,8 @@ while ($sql_user_stmt->fetch())
 		'backgroundColor':'transparent',
 		'chartArea.top':0,
 		'chartArea.left':0,
-		'width':220,
-		'height':220,
+		'width':350,
+		'height':350,
 		'colors':['#C00000','#C03333','#C06666','#C09999','#C0C0C0','#888888','#444444','#000000'],
 		'fontSize':14,
 		'fontName':'Consolas'

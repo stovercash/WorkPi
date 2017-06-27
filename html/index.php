@@ -51,27 +51,25 @@ include 'jobsopenjobhours.php';
 	&nbsp &nbsp &nbsp &nbsp &nbsp 1010 &nbsp &nbsp &nbsp 10101 &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 2
 	</div>
 </div>
-<div style="width: 288px; height: 120px; background-color: white; margin: 20px; padding: 20px; border-color: white; border-radius: 10px 35px; float: left">
+<div style="width: 360px; height: 215px; background-color: white; margin: 20px; padding: 20px; border-color: white; border-radius: 10px 35px; float: left">
 <?php
 include 'vsocheckintable.php';
 ?>
 </div>
-<div style="width: auto; height: 120px; background-color: white; margin: 20px; padding: 20px; border-color: white; border-radius: 10px 35px; float: left">
+<div style="width: auto; height: 215px; background-color: white; margin: 20px; padding: 20px; border-color: white; border-radius: 10px 35px; float: left">
 <?php
 include 'vsocheckinaverage.php';
 ?>
 </div>
-<div style="width: 160px; height: 160px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; float: left">
-<div style="position: relative; top: -30px; left: -30px" id="chart_div"></div>
+<div style="width: 255px; height: 255px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; float: left">
+<div style="position: relative; top: -45px; left: -45px" id="chart_div"></div>
 </div>
-<div style="clear: left"></div>
 <?php
 include 'jobsoverduebyuser.php';
 ?>
 <div style="width: 420px; height: 215px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; padding: 20px; float: left">
 <div id="chart_div_cloud" style="width: 100%; height: 100%;"></div>
 </div>
-<div style="clear: left"></div>
 <div style="width: 420px; height: 215px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; padding: 20px; float: left">
 <div id="chart_div_jobhours" style="width: 100%; height: 100%;"></div>
 </div>
