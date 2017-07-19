@@ -1,3 +1,4 @@
+<div style="height: 20px; width: 100%; float: left; clear: left; font-size: 20px; text-align: center"><span style="position: relative; top: -4px; color: LightGray">Check In Calendar</span></div>
 <?php
 $mysecrets = json_decode(file_get_contents("/home/pi/dev/WorkPi/setup/secrets.json"), true);
 
@@ -6,6 +7,7 @@ $boxsize = 20;
 $ytotal = 8;
 $xtotal = 15;
 $maxchanges = 50;
+$no_of_months = 0;
 
 $y = 1;
 $total_days = $ytotal * $xtotal;
@@ -23,6 +25,27 @@ while($y <= $ytotal)
 		$this_date = new DateTime();
 		$this_date = $this_date->modify("-$subtract_days days");
 		$this_month = intval($this_date->format('m'));
+		$month_text = $this_date->format('M');
+		if($y == $ytotal)
+		{
+			if($no_of_months == 0)
+			{
+				$month_array[] = array($month_text,$x,$x);
+				$no_of_months++;
+			}
+			else
+			{
+				if($month_array[$no_of_months-1][0] == $month_text)
+				{
+					$month_array[$no_of_months-1][2] = $x;
+				}
+				else
+				{
+					$month_array[] = array($month_text,$x,$x);
+					$no_of_months++;
+				}
+			}
+		}
 
 		$this_start_time = $this_date->format('Y-m-d') . " 00:00:00.00";
 		$this_end_time = $this_date->format('Y-m-d') . " 23:59:59.999";
@@ -69,4 +92,12 @@ while($y <= $ytotal)
 	$y++;
 }
 $sql_stmt->close();
+
+echo '<div style="float: left; clear: left"></div>';
+$x = 0;
+while($x < $no_of_months)
+{
+	echo '<div style="height: ' . $boxsize . '; width: ' . (($month_array[$x][2] - $month_array[$x][1] + 1) * ($boxsize + $bordersize * 2)) . 'px; float: left; text-align: center; color: LightGray; font-size: 15px">' . $month_array[$x][0] . '</div>';
+	$x++;
+}
 ?>

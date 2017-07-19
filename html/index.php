@@ -71,7 +71,8 @@ include 'jobsoverduebyuser.php';
 <div id="chart_div_cloud" style="width: 100%; height: 100%;"></div>
 </div>
 <div style="width: 420px; height: 215px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; padding: 20px; float: left">
-<div id="chart_div_jobhours" style="width: 100%; height: 100%;"></div>
+<div style="width: 100%; height: 20px; float: left; text-align: center; font-size: 20px"><span style="position: relative; top: -4px; color: LightGray">Open Job Hours</span></div>
+<div id="chart_div_jobhours" style="width: 100%; height: auto; float: left; clear: left"></div>
 </div>
 </body>
 </html>

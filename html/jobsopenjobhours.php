@@ -5,7 +5,7 @@ $first = true;
 
 $dateEnd = new DateTime('now');
 $dateLoop = new DateTime('now');
-$dateLoop = date_sub($dateLoop,date_interval_create_from_date_string("10 days"));
+$dateLoop = date_sub($dateLoop,date_interval_create_from_date_string("30 days"));
 
 $mysqli = new mysqli('localhost',$mysecrets["sql"]["user"],$mysecrets["sql"]["pass"],$mysecrets["sql"]["dbname"]);
 $sql_wordcloud_stmt = $mysqli->prepare("SELECT OpenJobHours FROM JobUserStats WHERE (UserID = ?) AND (DateChecked = ?)");
@@ -25,6 +25,7 @@ echo "]";
 while ($dateLoop <= $dateEnd)
 {
 	echo ",['" . date_format($dateLoop,"m/d") . "'";
+//	echo ",[new Date(" . date_format($dateLoop,"Y, m, d") . ")";
 	$sql_user_stmt->execute();
 	$sql_user_stmt->bind_result($userid);
 	$sql_user_stmt->store_result();
@@ -48,10 +49,9 @@ while ($dateLoop <= $dateEnd)
 	]);
 
 	var options3 = {
-		title: 'Open Job Hours',
 		isStacked: true,
 		fontName: 'Consolas',
-		chartArea: {width:'300',height:'150'}
+		chartArea: {width:'300',height:'150'},
 	}
 
 	var chart3 = new google.visualization.AreaChart(document.getElementById('chart_div_jobhours'));
