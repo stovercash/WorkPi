@@ -5,7 +5,7 @@ $first = true;
 
 $dateEnd = new DateTime('now');
 $dateLoop = new DateTime('now');
-$dateLoop = date_sub($dateLoop,date_interval_create_from_date_string("30 days"));
+$dateLoop = date_sub($dateLoop,date_interval_create_from_date_string("60 days"));
 
 $mysqli = new mysqli('localhost',$mysecrets["sql"]["user"],$mysecrets["sql"]["pass"],$mysecrets["sql"]["dbname"]);
 $sql_wordcloud_stmt = $mysqli->prepare("SELECT OpenJobHours FROM JobUserStats WHERE (UserID = ?) AND (DateChecked = ?)");
@@ -51,7 +51,7 @@ while ($dateLoop <= $dateEnd)
 	var options3 = {
 		isStacked: true,
 		fontName: 'Consolas',
-		chartArea: {width:'300',height:'150'},
+		chartArea: {width:'300',height:'142'},
 	}
 
 	var chart3 = new google.visualization.AreaChart(document.getElementById('chart_div_jobhours'));

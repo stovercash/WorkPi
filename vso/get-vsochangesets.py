@@ -34,6 +34,8 @@ jres = results.json()
 #print(jres)
 
 for changeset in jres["value"]:
+	if "comment" not in changeset:
+		changeset["comment"] = ""
 	if changeset["comment"] not in mysecrets["vso"]["excludecomments"]:
 		cur.execute("SELECT EntryNo FROM VSOCheckIn WHERE EntryNo = %s",(changeset["changesetId"]))
 		if not cur.fetchone():
@@ -48,7 +50,7 @@ for changeset in jres["value"]:
 				UserID = UserRow[0]
 			results = requests.get(baseurl+singlechangefunc+str(changeset["changesetId"])+singlechangesuffix, auth=(user,pat))
 			jsingle = results.json()
-#			print(str(jsingle["count"]))
+#			print(str(changeset["createdDate"]))
 			cur.execute("INSERT INTO VSOCheckIn (EntryNo,UserID,DateCheckedIn,DisplayName,Comment,NoOfObjects) VALUES (%s,%s,%s,%s,%s,%s)",(changeset["changesetId"],UserID,changeset["createdDate"],changeset["author"]["displayName"],changeset["comment"],jsingle["count"]))
 
 cur.execute("UPDATE VSOSetup SET CheckInDownloadedDate = '" + today.strftime('%Y-%m-%d') +  "' WHERE PrimaryKey = 0")
