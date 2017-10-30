@@ -85,13 +85,17 @@ cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME
 if not cur.fetchone():
 	cur.execute("ALTER TABLE VSOSetup ADD CheckInDownloadedDate datetime")
 
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOSetup' AND COLUMN_NAME = 'CheckInLastId';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE VSOSetup ADD CheckInLastId int")
+
 cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'VSOSetup' AND COLUMN_NAME = 'WordCloudUpdatedEntry';")
 if not cur.fetchone():
 	cur.execute("ALTER TABLE VSOSetup ADD WordCloudUpdatedEntry int")
 
 cur.execute("SELECT PrimaryKey FROM VSOSetup")
 if not cur.fetchone():
-	cur.execute("INSERT INTO VSOSetup (PrimaryKey, CheckInDownloadedDate, WordCloudUpdatedEntry) VALUES (0,'" + today.strftime('%Y-%m-%d') + "', 0);")
+	cur.execute("INSERT INTO VSOSetup (PrimaryKey, CheckInDownloadedDate, CheckInLastId, WordCloudUpdatedEntry) VALUES (0,'" + today.strftime('%Y-%m-%d') + "', 1, 0);")
 
 cur.execute("SHOW TABLES LIKE 'VSOUser';")
 if not cur.fetchone():
