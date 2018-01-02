@@ -20,7 +20,7 @@ jobcur = jobconn.cursor()
 
 userrow = localcur.fetchone()
 while userrow:
-	jobcur.execute("SELECT SUM([Initial Budget Hours]) AS [Open Job Hours] FROM " + mysecrets["job_sql"]["jobtable"] + " WHERE ([Person Responsible] = %s) AND ([Invoice Status] < 2) AND ([Billing status] = 2 ) AND (Priority > 0) AND (Priority < 9)",(userrow[0]))
+	jobcur.execute("SELECT SUM([Initial Budget Hours]) AS [Open Job Hours] FROM " + mysecrets["job_sql"]["jobtable"] + " WHERE ([Person Responsible] = %s) AND ([Invoice Status] < 2) AND ([Billing status] = 2 ) AND (Priority > 0) AND (Priority < 9) AND ([Fault Reason Code] <> 'SUPP') AND ([Fault Reason Code] <> 'PROJ-SVCS')",(userrow[0]))
 	jobrow = jobcur.fetchone()
 	if inscur.execute("SELECT UserID, DateChecked FROM JobUserStats WHERE (UserID = %s) AND (DateChecked = %s)", (userrow[0],todayText)):
 		inscur.execute("UPDATE JobUserStats SET OpenJobHours = %s WHERE  (UserID = %s) AND (DateChecked = %s)", (jobrow[0],userrow[0],todayText))

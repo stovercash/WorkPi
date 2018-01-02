@@ -5,7 +5,7 @@ $first = true;
 
 $dateEnd = new DateTime('now');
 $dateLoop = new DateTime('now');
-$dateLoop = date_sub($dateLoop,date_interval_create_from_date_string("60 days"));
+$dateLoop = date_sub($dateLoop,date_interval_create_from_date_string("100 days"));
 
 $mysqli = new mysqli('localhost',$mysecrets["sql"]["user"],$mysecrets["sql"]["pass"],$mysecrets["sql"]["dbname"]);
 $sql_wordcloud_stmt = $mysqli->prepare("SELECT OpenJobHours FROM JobUserStats WHERE (UserID = ?) AND (DateChecked = ?)");
