@@ -31,6 +31,7 @@ while ($dateLoop <= $dateEnd)
 	$sql_user_stmt->store_result();
 	while ($sql_user_stmt->fetch())
 	{
+		$hours = 0;
 		$sql_wordcloud_stmt->bind_param("ss",$userid,date_format($dateLoop,"Y-m-d"));
 		$sql_wordcloud_stmt->execute();
 		$sql_wordcloud_stmt->bind_result($hours);
