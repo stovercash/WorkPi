@@ -42,6 +42,11 @@ if "pass" not in mysecrets["job_sql"]:
 if "jobtable" not in mysecrets["job_sql"]:
 	mysecrets["job_sql"]["jobtable"] = ""
 
+if "cal" not in mysecrets:
+	mysecrets["cal"] = {}
+if "ical_url" not in mysecrets["cal"]:
+	mysecrets["cal"]["ical_url"] = ""
+
 with open("secrets.json", "w") as outfile:
 	json.dump(mysecrets,outfile)
 
