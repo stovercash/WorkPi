@@ -24,7 +24,7 @@ screen_category = ""
 screen_title = ""
 screen_time = ""
 
-file = open("../cal/calendar.ics", "rb")
+file = open("/home/pi/dev/WorkPi/cal/calendar.ics", "rb")
 ical = icalendar.Calendar.from_ical(file.read())
 for event in ical.walk("VEVENT"):
 	if (event.get("X-MICROSOFT-CDO-ALLDAYEVENT") == "FALSE") and (event.get("X-MICROSOFT-CDO-BUSYSTATUS") == "BUSY"):
