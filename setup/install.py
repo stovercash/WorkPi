@@ -121,6 +121,10 @@ cur.execute("SHOW TABLES LIKE 'VSOWordCloud';")
 if not cur.fetchone():
 	cur.execute("CREATE TABLE VSOWordCloud ( Word varchar(100) NOT NULL, Count int );")
 
+cur.execute("SHOW TABLES LIKE 'eInkDisplay';")
+if not cur.fetchone():
+	cur.execute("CREATE TABLE eInkDisplay ( CurrentCategory varchar(20) NOT NULL, CurrentTitle varchar(100) NOT NULL, LastTimeRefreshed datetime );")
+
 con.commit()
 cur.close()
 con.close()
