@@ -4,6 +4,7 @@ import icalendar
 from datetime import datetime, date, time, timedelta
 import pytz
 import pymysql
+import os
 
 import epd2in7b
 import Image
@@ -26,13 +27,13 @@ screen_time = ""
 file = open("../cal/calendar.ics", "rb")
 ical = icalendar.Calendar.from_ical(file.read())
 for event in ical.walk("VEVENT"):
-	if (event.get("X-MICROSOFT-CDO-ALLDAYEVENT") == "FALSE") and (event.get("X-MICROSOFT-CDO-IMPORTANCE") != "0"):
+	if (event.get("X-MICROSOFT-CDO-ALLDAYEVENT") == "FALSE") and (event.get("X-MICROSOFT-CDO-BUSYSTATUS") == "BUSY"):
 		event_dtstart = event.get("DTSTART")
 		event_dtend = event.get("DTEND")
 		start_time = event_dtstart.dt - timedelta(minutes=5)
 		end_time = event_dtend.dt
 		#if (end_time > current_time):
-		if (start_time < current_time) AND (end_time > current_time):
+		if (start_time < current_time) and (end_time > current_time):
 			screen_title = event.get("SUMMARY")
 			screen_title = screen_title[:100]
 			screen_category = "MEETING"
@@ -43,15 +44,15 @@ current_time = datetime.now()
 
 #if 1==1:
 if screen_category == "":
-	if (current_time.time() > time(8,0)) and (current_time.time() < time(9,0)):
+	if (current_time.time() > time(7,55)) and (current_time.time() < time(9,0)):
 		screen_title = "Good Morning"
 		screen_category = "MORNING"
 		screen_time = ""
-	if (current_time.time() > time(12,0)) and (current_time.time() < time(14,0)):
+	if (current_time.time() > time(11,55)) and (current_time.time() < time(14,0)):
 		screen_title = "Eat Lunch"
 		screen_category = "LUNCH"
 		screen_time = ""
-	if (current_time.time() > time(18,0)) and (current_time.time() < time(19,0)):
+	if (current_time.time() > time(17,55)) and (current_time.time() < time(19,0)):
 		screen_title = "Home"
 		screen_category = "NIGHT"
 		screen_time = ""
@@ -97,7 +98,7 @@ epd.draw_filled_rectangle(frame_red, 0, 0, epd.width, 20, COLORED)
 epd.draw_string_at(frame_red, 0, 0, "- WorkPi -", font, UNCOLORED)
 epd.draw_string_at(frame_red, 120, 0, current_time.strftime('%y%m%d %H:%M'), font, UNCOLORED)
 
-epd.draw_string_at(frame_black, 120, 150, screen_time, font, COLORED)
+epd.draw_string_at(frame_black, 80, 150, screen_time, font, COLORED)
 
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf', 12)
 epd.draw_string_at(frame_black, 0, 30, screen_title[:19], font, COLORED)
@@ -106,6 +107,6 @@ epd.draw_string_at(frame_black, 0, 70, screen_time[40:59], font, COLORED)
 epd.draw_string_at(frame_black, 0, 90, screen_time[60:79], font, COLORED)
 epd.draw_string_at(frame_black, 0, 110, screen_time[80:100], font, COLORED)
 
-eod.display_frame(frame_black, frame_red)
+epd.display_frame(frame_black, frame_red)
 
 #print("Refresh screen")
