@@ -28,11 +28,16 @@ file = open("/home/pi/dev/WorkPi/cal/calendar.ics", "rb")
 ical = icalendar.Calendar.from_ical(file.read())
 for event in ical.walk("VEVENT"):
 	if (event.get("X-MICROSOFT-CDO-ALLDAYEVENT") == "FALSE") and (event.get("X-MICROSOFT-CDO-BUSYSTATUS") == "BUSY"):
-		event_dtstart = event.get("DTSTART")
-		event_dtend = event.get("DTEND")
-		start_time = event_dtstart.dt - timedelta(minutes=5)
-		end_time = event_dtend.dt
-		#if (end_time > current_time):
+		event_dtstart = event.get("DTSTART").dt
+		event_dtend = event.get("DTEND").dt
+		if (event.get("RRULE") is not None):
+			rule = rrule.rrulestr(event.get("RRULE").to_ical().decode('utf-8'), dtstart=event_dtstart)
+			start_time = rule.after(current_time)
+			end_time = start_time + (event_dtend - event_dtstart)
+			start_time = start_time - timedelta(minutes=5)
+		else:
+			start_time = event_dtstart.dt - timedelta(minutes=5)
+			end_time = event_dtend.dt
 		if (start_time < current_time) and (end_time > current_time):
 			screen_title = event.get("SUMMARY")
 			screen_title = screen_title[:100]
@@ -53,7 +58,7 @@ if screen_category == "":
 		screen_category = "LUNCH"
 		screen_time = ""
 	if (current_time.time() > time(17,55)) and (current_time.time() < time(19,0)):
-		screen_title = "Home"
+		screen_title = ""
 		screen_category = "NIGHT"
 		screen_time = ""
 
@@ -80,19 +85,20 @@ localconn.close()
 
 epd = epd2in7b.EPD()
 epd.init()
-epd.rotate = epd2in7b.ROTATE_270
-epd.width = epd2in7b.EPD_HEIGHT
-epd.height = epd2in7b.EPD_WIDTH
 
 frame_black = [0] * (epd.width * epd.height / 8)
 frame_red = [0] * (epd.width * epd.height / 8)
 
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf', 18)
 
-if os.path.isfile('img/' + screen_category + '_black.bmp'):
-	frame_black = epd.get_frame_buffer(Image.open('img/' + screen_category + '_black.bmp'))
-if os.path.isfile('img/' + screen_category + '_red.bmp'):
-	frame_red = epd.get_frame_buffer(Image.open('img/' + screen_category + '_red.bmp'))
+if os.path.isfile('/home/pi/dev/WorkPi/eink/img/' + screen_category + '_black.bmp'):
+	frame_black = epd.get_frame_buffer(Image.open('/home/pi/dev/WorkPi/eink/img/' + screen_category + '_black.bmp'))
+if os.path.isfile('/home/pi/dev/WorkPi/eink/img/' + screen_category + '_red.bmp'):
+	frame_red = epd.get_frame_buffer(Image.open('/home/pi/dev/WorkPi/eink/img/' + screen_category + '_red.bmp'))
+
+epd.rotate = epd2in7b.ROTATE_270
+epd.width = epd2in7b.EPD_HEIGHT
+epd.height = epd2in7b.EPD_WIDTH
 
 epd.draw_filled_rectangle(frame_red, 0, 0, epd.width, 20, COLORED)
 epd.draw_string_at(frame_red, 0, 0, "- WorkPi -", font, UNCOLORED)
