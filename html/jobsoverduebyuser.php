@@ -9,7 +9,7 @@ $today_date = new DateTime();
 
 $this_time = $today_date->format('Y-m-d') . " 00:00:00.00";
 
-echo '<div style="width: 480px; height: 255px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; position: relative; float: left">';
+echo '<div style="width: 420px; height: 255px; background-color: white; margin: 20px; border-color: white; border-radius: 10px 35px; position: relative; float: left">';
 echo '<div style="width: 100%; height: 10px; background-color: transparent; clear:left; float: left"></div>';
 echo '<div style="width: 100%; height: 25px; background-color: transparent; text-align: center; clear:left; float: left"><span style="font-size: 20px; font-family: consolas; color: LightGray;">Overdue Logs</span></div>';
 for ($i = 1; $i <= 10; $i++)

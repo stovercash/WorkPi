@@ -2,6 +2,7 @@ import json
 import sys
 import icalendar
 from datetime import datetime, date, time, timedelta
+from dateutil import rrule
 import pytz
 import pymysql
 import os
@@ -36,13 +37,13 @@ for event in ical.walk("VEVENT"):
 			end_time = start_time + (event_dtend - event_dtstart)
 			start_time = start_time - timedelta(minutes=5)
 		else:
-			start_time = event_dtstart.dt - timedelta(minutes=5)
-			end_time = event_dtend.dt
+			start_time = event_dtstart - timedelta(minutes=5)
+			end_time = event_dtend
 		if (start_time < current_time) and (end_time > current_time):
 			screen_title = event.get("SUMMARY")
 			screen_title = screen_title[:100]
 			screen_category = "MEETING"
-			screen_time = event_dtstart.dt.strftime("%-I:%M %p") + " - " + event_dtend.dt.strftime("%-I:%M %p")
+			screen_time = event_dtstart.strftime("%-I:%M %p") + " - " + event_dtend.strftime("%-I:%M %p")
 file.close()
 
 current_time = datetime.now()
@@ -100,9 +101,9 @@ epd.rotate = epd2in7b.ROTATE_270
 epd.width = epd2in7b.EPD_HEIGHT
 epd.height = epd2in7b.EPD_WIDTH
 
-epd.draw_filled_rectangle(frame_red, 0, 0, epd.width, 20, COLORED)
-epd.draw_string_at(frame_red, 0, 0, "- WorkPi -", font, UNCOLORED)
-epd.draw_string_at(frame_red, 120, 0, current_time.strftime('%y%m%d %H:%M'), font, UNCOLORED)
+epd.draw_filled_rectangle(frame_black, 0, 0, epd.width, 20, COLORED)
+epd.draw_string_at(frame_black, 0, 0, "- WorkPi -", font, UNCOLORED)
+epd.draw_string_at(frame_black, 120, 0, current_time.strftime('%y%m%d %H:%M'), font, UNCOLORED)
 
 epd.draw_string_at(frame_black, 80, 150, screen_time, font, COLORED)
 
