@@ -6,24 +6,38 @@ from dateutil import rrule
 import pytz
 import pymysql
 import os
+import textwrap
 
 import epd2in7b
 import Image
 import ImageFont
 import ImageDraw
 
+COLORED = 1
+UNCOLORED = 0
+
+current_time = datetime.now(pytz.timezone("America/New_York"))
+
 mysecrets = json.loads(open("/home/pi/dev/WorkPi/setup/secrets.json").read())
 localconn = pymysql.connect("localhost",mysecrets["sql"]["user"],mysecrets["sql"]["pass"],"")
 localcur = localconn.cursor()
 
-COLORED = 1
-UNCOLORED = 0
+localcur.execute("USE " + mysecrets["sql"]["dbname"] + ";")
 
-current_time = datetime.now(pytz.timezone("EST"))
+localcur.execute("SELECT NextRefreshTime FROM eInkDisplay")
+if localcur.rowcount > 0:
+	sqlDisp = localcur.fetchone()
+	if sqlDisp[0] is not None:
+		next_time = pytz.timezone("America/New_York").localize(sqlDisp[0])
+		if next_time > current_time:
+			sys.exit(0)
 
 screen_category = ""
 screen_title = ""
 screen_time = ""
+
+next_time = datetime.now(pytz.timezone("America/New_York"))
+next_time = next_time + timedelta(minutes=30)
 
 file = open("/home/pi/dev/WorkPi/cal/calendar.ics", "rb")
 ical = icalendar.Calendar.from_ical(file.read())
@@ -44,21 +58,29 @@ for event in ical.walk("VEVENT"):
 			screen_title = screen_title[:100]
 			screen_category = "MEETING"
 			screen_time = event_dtstart.strftime("%-I:%M %p") + " - " + event_dtend.strftime("%-I:%M %p")
+		if (start_time > current_time) and (start_time < next_time):
+			next_time = start_time
 file.close()
 
 current_time = datetime.now()
 
-#if 1==1:
+if (current_time.time() < time(8,0)) and (next_time.time() > time(8,0)):
+	next_time = datetime(current_time.year, current_time.month, current_time.day, 8, 8, 0)
+if (current_time.time() < time(12,0)) and (next_time.time() > time(12,0)):
+	next_time = datetime(current_time.year, current_time.month, current_time.day, 12, 0, 0)
+if (current_time.time() < time(18,0)) and (next_time.time() > time(18,0)):
+	next_time = datetime(current_time.year, current_time.month, current_time.day, 18, 0, 0)
+
 if screen_category == "":
-	if (current_time.time() > time(7,55)) and (current_time.time() < time(9,0)):
-		screen_title = "Good Morning"
+	if (current_time.time() >= time(8,0)) and (current_time.time() < time(9,0)):
+		screen_title = ""
 		screen_category = "MORNING"
 		screen_time = ""
-	if (current_time.time() > time(11,55)) and (current_time.time() < time(14,0)):
+	if (current_time.time() >= time(12,0)) and (current_time.time() < time(14,0)):
 		screen_title = "Eat Lunch"
 		screen_category = "LUNCH"
 		screen_time = ""
-	if (current_time.time() > time(17,55)) and (current_time.time() < time(19,0)):
+	if (current_time.time() >= time(18,0)) and (current_time.time() < time(19,0)):
 		screen_title = ""
 		screen_category = "NIGHT"
 		screen_time = ""
@@ -68,18 +90,19 @@ if screen_category == "":
 	screen_category = "BLANK"
 	screen_time = ""
 
-#print(screen_title + " - " + screen_category + " - " + screen_time)
-
-localcur.execute("USE " + mysecrets["sql"]["dbname"] + ";")
-localcur.execute("SELECT CurrentCategory, CurrentTitle FROM eInkDisplay")
-
+localcur.execute("SELECT CurrentCategory, CurrentTitle, LastTimeRefreshed FROM eInkDisplay")
 if localcur.rowcount > 0:
 	sqlDisp = localcur.fetchone()
 	if (sqlDisp[0] == screen_category) and (sqlDisp[1] == screen_title):
+		localcur.execute("DELETE FROM eInkDisplay")
+		localcur.execute("INSERT INTO eInkDisplay (CurrentCategory, CurrentTitle, LastTimeRefreshed, NextRefreshTime) VALUES (%s, %s, %s, %s)", (sqlDisp[0],sqlDisp[1],sqlDisp[2],next_time))
+		localconn.commit()
+		localcur.close()
+		localconn.close()
 		sys.exit(0)
 
 localcur.execute("DELETE FROM eInkDisplay")
-localcur.execute("INSERT INTO eInkDisplay (CurrentCategory, CurrentTitle, LastTimeRefreshed) VALUES (%s, %s, %s)", (screen_category,screen_title,current_time))
+localcur.execute("INSERT INTO eInkDisplay (CurrentCategory, CurrentTitle, LastTimeRefreshed, NextRefreshTime) VALUES (%s, %s, %s, %s)", (screen_category,screen_title,current_time,next_time))
 localconn.commit()
 localcur.close()
 localconn.close()
@@ -105,15 +128,22 @@ epd.draw_filled_rectangle(frame_black, 0, 0, epd.width, 20, COLORED)
 epd.draw_string_at(frame_black, 0, 0, "- WorkPi -", font, UNCOLORED)
 epd.draw_string_at(frame_black, 120, 0, current_time.strftime('%y%m%d %H:%M'), font, UNCOLORED)
 
-epd.draw_string_at(frame_black, 80, 150, screen_time, font, COLORED)
+epd.draw_string_at(frame_black, 60, 150, screen_time, font, COLORED)
 
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf', 12)
-epd.draw_string_at(frame_black, 0, 30, screen_title[:19], font, COLORED)
-epd.draw_string_at(frame_black, 0, 50, screen_time[20:39], font, COLORED)
-epd.draw_string_at(frame_black, 0, 70, screen_time[40:59], font, COLORED)
-epd.draw_string_at(frame_black, 0, 90, screen_time[60:79], font, COLORED)
-epd.draw_string_at(frame_black, 0, 110, screen_time[80:100], font, COLORED)
+
+screen_title_lines = textwrap.wrap(screen_title,20)
+if len(screen_title_lines) > 0:
+	epd.draw_string_at(frame_black, 5, 30, screen_title_lines[0], font, COLORED)
+if len(screen_title_lines) > 1:
+	epd.draw_string_at(frame_black, 5, 50, screen_title_lines[1], font, COLORED)
+if len(screen_title_lines) > 2:
+	epd.draw_string_at(frame_black, 5, 70, screen_title_lines[2], font, COLORED)
+if len(screen_title_lines) > 3:
+	epd.draw_string_at(frame_black, 5, 90, screen_title_lines[3], font, COLORED)
+if len(screen_title_lines) > 4:
+	epd.draw_string_at(frame_black, 5, 110, screen_title_lines[4], font, COLORED)
+if len(screen_title_lines) > 5:
+	epd.draw_string_at(frame_black, 5, 130, screen_title_lines[5], font, COLORED)
 
 epd.display_frame(frame_black, frame_red)
-
-#print("Refresh screen")

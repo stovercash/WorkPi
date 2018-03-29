@@ -130,6 +130,10 @@ cur.execute("SHOW TABLES LIKE 'eInkDisplay';")
 if not cur.fetchone():
 	cur.execute("CREATE TABLE eInkDisplay ( CurrentCategory varchar(20) NOT NULL, CurrentTitle varchar(100) NOT NULL, LastTimeRefreshed datetime );")
 
+cur.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'eInkDisplay' AND COLUMN_NAME = 'NextRefreshTime';")
+if not cur.fetchone():
+	cur.execute("ALTER TABLE eInkDisplay ADD NextRefreshTime datetime")
+
 con.commit()
 cur.close()
 con.close()
