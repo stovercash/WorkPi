@@ -77,7 +77,7 @@ if screen_category == "":
 		screen_category = "MORNING"
 		screen_time = ""
 	if (current_time.time() >= time(12,0)) and (current_time.time() < time(14,0)):
-		screen_title = "Eat Lunch"
+		screen_title = ""
 		screen_category = "LUNCH"
 		screen_time = ""
 	if (current_time.time() >= time(18,0)) and (current_time.time() < time(19,0)):
@@ -128,7 +128,7 @@ epd.draw_filled_rectangle(frame_black, 0, 0, epd.width, 20, COLORED)
 epd.draw_string_at(frame_black, 0, 0, "- WorkPi -", font, UNCOLORED)
 epd.draw_string_at(frame_black, 120, 0, current_time.strftime('%y%m%d %H:%M'), font, UNCOLORED)
 
-epd.draw_string_at(frame_black, 60, 150, screen_time, font, COLORED)
+epd.draw_string_at(frame_black, 50, 150, screen_time, font, COLORED)
 
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf', 12)
 
