@@ -48,6 +48,9 @@ for event in ical.walk("VEVENT"):
 		if (event.get("RRULE") is not None):
 			rule = rrule.rrulestr(event.get("RRULE").to_ical().decode('utf-8'), dtstart=event_dtstart)
 			start_time = rule.after(current_time)
+			if start_time.strftime("%Z") == "EST":
+				start_time = start_time.replace(tzinfo=None)
+				start_time = pytz.timezone("America/New_York").localize(start_time)
 			end_time = start_time + (event_dtend - event_dtstart)
 			start_time = start_time - timedelta(minutes=5)
 		else:
