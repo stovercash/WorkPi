@@ -28,7 +28,7 @@ singlechangefunc = 'DefaultCollection/_apis/tfvc/changesets/'
 singlechangesuffix = '/changes?api-version=2.0'
 
 results = requests.get(baseurl+changesetsfunc, auth=(user,pat))
-#print(results.json())
+#print(results)
 jres = results.json()
 
 for changeset in jres["value"]:

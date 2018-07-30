@@ -115,7 +115,8 @@ while ($dateLoop <= $dateEnd)
 	var options3 = {
 		isStacked: true,
 		fontName: 'Consolas',
-		chartArea: {width:'300',height:'142'},
+		chartArea: {width:'450',height:'125'},
+		hAxis: {textStyle: {fontSize: 10}}
 	}
 
 	var chart3 = new google.visualization.AreaChart(document.getElementById('chart_div_jobhours'));

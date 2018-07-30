@@ -42,27 +42,32 @@ next_time = next_time + timedelta(minutes=30)
 file = open("/home/pi/dev/WorkPi/cal/calendar.ics", "rb")
 ical = icalendar.Calendar.from_ical(file.read())
 for event in ical.walk("VEVENT"):
+	skip = False
 	if (event.get("X-MICROSOFT-CDO-ALLDAYEVENT") == "FALSE") and (event.get("X-MICROSOFT-CDO-BUSYSTATUS") == "BUSY"):
 		event_dtstart = event.get("DTSTART").dt
 		event_dtend = event.get("DTEND").dt
 		if (event.get("RRULE") is not None):
 			rule = rrule.rrulestr(event.get("RRULE").to_ical().decode('utf-8'), dtstart=event_dtstart)
 			start_time = rule.after(current_time)
-			if start_time.strftime("%Z") == "EST":
-				start_time = start_time.replace(tzinfo=None)
-				start_time = pytz.timezone("America/New_York").localize(start_time)
-			end_time = start_time + (event_dtend - event_dtstart)
-			start_time = start_time - timedelta(minutes=5)
+			if type(start_time) is datetime:
+				if start_time.strftime("%Z") == "EST":
+					start_time = start_time.replace(tzinfo=None)
+					start_time = pytz.timezone("America/New_York").localize(start_time)
+				end_time = start_time + (event_dtend - event_dtstart)
+				start_time = start_time - timedelta(minutes=5)
+			else:
+				skip = True
 		else:
 			start_time = event_dtstart - timedelta(minutes=5)
 			end_time = event_dtend
-		if (start_time < current_time) and (end_time > current_time):
-			screen_title = event.get("SUMMARY")
-			screen_title = screen_title[:100]
-			screen_category = "MEETING"
-			screen_time = event_dtstart.strftime("%-I:%M %p") + " - " + event_dtend.strftime("%-I:%M %p")
-		if (start_time > current_time) and (start_time < next_time):
-			next_time = start_time
+		if not skip:
+			if (start_time < current_time) and (end_time > current_time):
+				screen_title = event.get("SUMMARY")
+				screen_title = screen_title[:100]
+				screen_category = "MEETING"
+				screen_time = event_dtstart.strftime("%-I:%M %p") + " - " + event_dtend.strftime("%-I:%M %p")
+			if (start_time > current_time) and (start_time < next_time):
+				next_time = start_time
 file.close()
 
 current_time = datetime.now()
